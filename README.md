@@ -90,5 +90,5 @@ Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](/LICENSE) para m
 
 ---
 
-Feito com :purple_heart: by [Ivo Aragão, Eduardo, Ana Mires, Joacir]
+Feito com :purple_heart: by [Ivo Aragão, Eduardo, Igor, Joacir]
 

@@ -3,4 +3,20 @@
 
 {% block content %}
   {{ section.products("Últimos Produtos", "container", products) }}
+
+  {% if totalPages > 1 %}
+    <div class="pagination">
+      {% if currentPage > 1 %}
+        <a href="?page={{ currentPage - 1 }}" class="prev">Anterior</a>
+      {% endif %}
+
+      {% for page in range(1, totalPages + 1) %}
+        <a href="?page={{ page }}" class="{% if page == currentPage %}active{% endif %}">{{ page }}</a>
+      {% endfor %}
+
+      {% if currentPage < totalPages %}
+        <a href="?page={{ currentPage + 1 }}" class="next">Próximo</a>
+      {% endif %}
+    </div>
+  {% endif %}
 {% endblock %}
