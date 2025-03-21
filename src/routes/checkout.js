@@ -1,8 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const ProductController = require('../app/controllers/ProductController.js');
-// Rota para exibir o checkout
-router.get('/checkout', ProductController.checkout);
+
+// Rota genérica: redireciona "/checkout" para "/checkout/credit-card"
+router.get('/checkout', (req, res) => {
+  res.redirect('/checkout/credit-card');
+});
+
+// Rota para exibir o checkout com Cartão de Crédito
+router.get('/checkout/credit-card', ProductController.checkoutCreditCard);
+
+// Rota para exibir o checkout com PIX
+router.get('/checkout/pix', ProductController.checkoutPix);
 
 // Rota para processar pagamento (simulado)
 router.post('/payment/process', (req, res) => {
@@ -22,4 +31,4 @@ router.get('/payment/success/:orderId', (req, res) => {
   });
 });
 
-module.exports = router; // Exportação essencial
+module.exports = router;

@@ -2,7 +2,7 @@ const express = require('express');
 const nunjucks = require('nunjucks');
 const methodOverride = require('method-override');
 const routes = require('./routes');
-const checkoutRoutes = require('./routes/checkout'); // Adicione esta linha
+const checkoutRoutes = require('./routes/checkout');
 const session = require('./config/session');
 
 const server = express();
@@ -17,7 +17,7 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.static('public'));
 server.use(methodOverride('_method'));
 server.use(routes);
-server.use(checkoutRoutes); // Adicione esta linha
+server.use(checkoutRoutes);
 
 server.set('view engine', 'njk');
 

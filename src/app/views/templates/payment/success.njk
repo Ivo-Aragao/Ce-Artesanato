@@ -2,43 +2,22 @@
 {% import "partials/card.njk" as card %}
 
 {% block content %}
-  {% call card.render("Pagamento Aprovado!", "payment-success") %}
-    <div class="success-message">
-      <i class="material-icons large-icon">check_circle</i>
-      <h2>Pagamento realizado com sucesso!</h2>
-      <p>ID do Pedido: {{ orderId }}</p>
-      
-      <div class="summary">
-        <p>Um e-mail de confirmação foi enviado para sua caixa postal</p>
-        <p>Previsão de entrega: 5 dias úteis</p>
-      </div>
+  <link rel="stylesheet" href="/path/to/success.css">
 
-      <a href="/products/search" class="btn">Voltar às Compras</a>
+  {% call card.render("Pagamento Aprovado!", "payment-success") %}
+    <div class="payment-container">
+      <div class="success-message">
+        <i class="material-icons large-icon">check_circle</i>
+        <h2>Pagamento realizado com sucesso!</h2>
+        <p>ID do Pedido: {{ orderId }}</p>
+
+        <div class="summary">
+          <p>Um e-mail de confirmação foi enviado para sua caixa postal</p>
+          <p>Previsão de entrega: 5 dias úteis</p>
+        </div>
+
+        <a href="/products/search" class="btn">Voltar às Compras</a>
+      </div>
     </div>
   {% endcall %}
 {% endblock %}
-
-<style>
-.payment-success {
-  text-align: center;
-  padding: 2rem;
-}
-
-.large-icon {
-  font-size: 4rem;
-  color: #2ecc71;
-  margin-bottom: 1rem;
-}
-
-.success-message h2 {
-  color: #2ecc71;
-  margin-bottom: 1rem;
-}
-
-.summary {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 2rem 0;
-}
-</style>
