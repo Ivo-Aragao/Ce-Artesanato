@@ -1,7 +1,8 @@
--- Remova as tabelas existentes, se necessário, para evitar conflitos
+-- Remova as tabelas e visões existentes, se necessário, para evitar conflitos
+DROP VIEW IF EXISTS "products" CASCADE;
 DROP TABLE IF EXISTS "orders" CASCADE;
 DROP TABLE IF EXISTS "files" CASCADE;
-DROP TABLE IF EXISTS "products" CASCADE;
+DROP TABLE IF EXISTS "products_with_deleted" CASCADE;
 DROP TABLE IF EXISTS "categories" CASCADE;
 DROP TABLE IF EXISTS "session" CASCADE;
 DROP TABLE IF EXISTS "users" CASCADE;
@@ -21,7 +22,8 @@ CREATE TABLE "products" (
   "quantity" int DEFAULT 0,
   "status" int DEFAULT 1,
   "created_at" timestamp DEFAULT (now()),
-  "updated_at" timestamp DEFAULT (now())
+  "updated_at" timestamp DEFAULT (now()),
+  "deleted_at" timestamp
 );
 
 -- Criação da tabela de categorias
@@ -30,9 +32,17 @@ CREATE TABLE "categories" (
   "name" text NOT NULL
 );
 
--- Inserção de dados na tabela de categorias com as novas categorias
-INSERT INTO categories("name") VALUES('Casa e Decoração');
-INSERT INTO categories("name") VALUES('Acessórios');
+-- Inserção de dados na tabela de categorias
+INSERT INTO categories("name") VALUES
+('Acessórios'),
+('Casa e Decoração'),
+('Moda e Vestuário'),
+('Papelaria e Personalizados'),
+('Brinquedos e Jogos'),
+('Arte e Pintura'),
+('Bijuterias e Joias Artesanais'),
+('Presentes e Lembrancinhas'),
+('Eco-Friendly e Sustentáveis');
 
 -- Criação da tabela de arquivos
 CREATE TABLE "files" (
@@ -107,7 +117,7 @@ DROP CONSTRAINT IF EXISTS files_product_id_fkey,
 ADD CONSTRAINT files_product_id_fkey
 FOREIGN KEY ("product_id")
 REFERENCES "products" ("id")
-ON DELETE CASCADE;	
+ON DELETE CASCADE;
 
 -- Limpeza de dados e reinício das sequências para cada tabela
 DELETE FROM users;
@@ -115,7 +125,7 @@ DELETE FROM products;
 DELETE FROM files;
 
 -- Reiniciar as sequências com os nomes corretos
-ALTER SEQUENCE user_id_seq RESTART WITH 1;
+ALTER SEQUENCE users_id_seq RESTART WITH 1;
 ALTER SEQUENCE products_id_seq RESTART WITH 1;
 ALTER SEQUENCE files_id_seq RESTART WITH 1;
 
@@ -144,9 +154,6 @@ FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
 -- Implementação de soft delete em produtos
-ALTER TABLE products ADD COLUMN "deleted_at" timestamp;
-
--- Regra de soft delete para produtos
 CREATE OR REPLACE RULE delete_products AS
 ON DELETE TO products DO INSTEAD
 UPDATE products
@@ -154,9 +161,5 @@ SET deleted_at = now()
 WHERE products.id = old.id;
 
 -- Criar uma visão para exibir apenas produtos ativos
-CREATE VIEW products_without_deleted AS
+CREATE VIEW products_active AS
 SELECT * FROM products WHERE deleted_at IS NULL;
-
--- Renomear tabela e visão
-ALTER TABLE products RENAME TO products_with_deleted;
-ALTER TABLE products_without_deleted RENAME TO products;
