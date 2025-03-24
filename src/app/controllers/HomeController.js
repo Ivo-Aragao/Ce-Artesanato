@@ -1,27 +1,38 @@
+// src/app/controllers/HomeController.js
 const LoadProductsService = require('../services/LoadProductService');
+const db = require('../../config/db');
 
 module.exports = {
   async index(req, res) {
     try {
+      // Carrega todos os produtos
       const allProducts = await LoadProductsService.load('products');
 
-      // Obtém a página atual a partir da query string (ex: ?page=2)
-      let { page } = req.query;
-      page = page ? Number(page) : 1; // Se não informado, assume a página 1
+      let { page, category } = req.query;
+      page = page ? Number(page) : 1;
 
-      const limit = 9; // Exibir 9 produtos por página
-      const offset = (page - 1) * limit; // Calcula o início dos produtos
+      const limit = 9;
+      const offset = (page - 1) * limit;
 
-      // Filtra os produtos para a página atual
-      const products = allProducts.slice(offset, offset + limit);
+      // Filtra os produtos se uma categoria for selecionada
+      let filteredProducts = allProducts;
+      if (category) {
+        filteredProducts = filteredProducts.filter(product => product.category_id == category);
+      }
 
-      // Calcula o total de páginas
-      const totalPages = Math.ceil(allProducts.length / limit);
+      const paginatedProducts = filteredProducts.slice(offset, offset + limit);
+      const totalPages = Math.ceil(filteredProducts.length / limit);
+
+      // Busca as categorias diretamente do banco de dados
+      const categoriesResults = await db.query('SELECT id, name FROM categories');
+      const categories = categoriesResults.rows;
 
       return res.render('templates/home/index', {
-        products,
+        products: paginatedProducts,
         totalPages,
-        currentPage: page
+        currentPage: page,
+        categories,
+        selectedCategory: category || ''
       });
     } catch (err) {
       console.log(err);
