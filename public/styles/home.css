@@ -87,3 +87,27 @@
 .pagination .next {
   font-weight: bold;
 }
+
+.search-box {
+  position: relative;
+  display: inline-block;
+}
+
+.search-box input {
+  padding-right: 150px; /* espaço para o botão */
+}
+
+.search-btn {
+  position: absolute;
+  right: 5px;
+  top: 55%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.search-btn i {
+  color: #666; /* ajuste a cor conforme desejado */
+}
