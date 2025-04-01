@@ -59,7 +59,7 @@ Siga os passos abaixo:
 
 ```bash
 # Abra um terminal e copie este repositório com o comando
-$ git clone https://github.com/Ivo-Aragao/Projeto-LDS.git
+$ git clone https://github.com/Ivo-Aragao/Ce-Artesanato
 # ou use a opção de download.
 
 # Instale as dependências
