@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ProductController = require('../app/controllers/ProductController.js');
+const OrderController = require('../app/controllers/OrderController.js');
 
 // Rota genérica: redireciona "/checkout" para "/checkout/credit-card"
 router.get('/checkout', (req, res) => {
@@ -13,15 +14,15 @@ router.get('/checkout/credit-card', ProductController.checkoutCreditCard);
 // Rota para exibir o checkout com PIX
 router.get('/checkout/pix', ProductController.checkoutPix);
 
-// Rota para processar pagamento (simulado)
-router.post('/payment/process', (req, res) => {
-  // Aqui você integraria com o gateway de pagamento real
-  const orderId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-  
-  // Limpar carrinho
-  req.session.cart = { items: [], total: 0 };
-  
-  res.redirect(`/payment/success/${orderId}`);
+// Rota para processar pagamento (simulado) e criar os pedidos
+router.post('/payment/process', async (req, res) => {
+  try {
+    // Chama o método que cria os pedidos a partir do carrinho
+    await OrderController.post(req, res);
+  } catch (err) {
+    console.error('Erro ao processar pagamento:', err);
+    res.render('templates/orders/error');
+  }
 });
 
 // Rota de sucesso
