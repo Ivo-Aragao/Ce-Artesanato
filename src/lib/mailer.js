@@ -1,10 +1,30 @@
+// lib/mailer.js
 const nodemailer = require('nodemailer');
 
-module.exports = nodemailer.createTransport({
-  host: 'smtp.mailtrap.io',
-  port: 2525,
+// Configuração do transporter (substitua TODO o conteúdo existente por isso)
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false,
   auth: {
-    user: 'b9aa16be2c5f1a',
-    pass: 'ad3c58fd8cbf1a'
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  },
+  tls: {
+    ciphers: 'SSLv3' // Adicione essa linha se estiver usando Outlook/Hotmail
   }
 });
+
+module.exports = {
+  sendMail: async (message) => {
+    try {
+      await transporter.sendMail({
+        ...message,
+        from: message.from || 'CE-Artesanato <no-reply@ceartesanato.com.br>'
+      });
+    } catch (error) {
+      console.error('Erro ao enviar e-mail:', error);
+      throw error;
+    }
+  }
+};
