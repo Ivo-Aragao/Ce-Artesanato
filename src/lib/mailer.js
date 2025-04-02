@@ -1,27 +1,38 @@
-// lib/mailer.js
 const nodemailer = require('nodemailer');
 
-// Configuração do transporter (substitua TODO o conteúdo existente por isso)
-const transporter = nodemailer.createTransport({
+console.log("Mailer Config:", {
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  secure: false,
+  user: process.env.SMTP_USER,
+  pass: process.env.SMTP_PASS
+});
+
+// Configuração do transporter
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: process.env.SMTP_PORT || 587,
+  secure: false, // true para porta 465, false para outras portas
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS
   },
   tls: {
-    ciphers: 'SSLv3' // Adicione essa linha se estiver usando Outlook/Hotmail
+    ciphers: 'TLSv1.2',
+    rejectUnauthorized: false
   }
 });
 
 module.exports = {
   sendMail: async (message) => {
     try {
-      await transporter.sendMail({
+      const mailOptions = {
         ...message,
-        from: message.from || 'CE-Artesanato <no-reply@ceartesanato.com.br>'
-      });
+        from: message.from || process.env.SMTP_FROM || 'SUA EMPRESA <SEU EMAIL>'
+      };
+      
+      const info = await transporter.sendMail(mailOptions);
+      console.log('E-mail enviado:', info.messageId);
+      return info;
     } catch (error) {
       console.error('Erro ao enviar e-mail:', error);
       throw error;
