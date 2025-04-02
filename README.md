@@ -62,6 +62,14 @@ Siga os passos abaixo:
 $ git clone https://github.com/Ivo-Aragao/Ce-Artesanato
 # ou use a opção de download.
 
+# Crie um .env na pasta do server.js e escreva:
+ SMTP_HOST=smtp.gmail.com
+ SMTP_PORT=587
+ SMTP_USER=SEU EMAIL
+ SMTP_PASS=SUA SENHA  # Gerar no Google Account > Security > App Passwords
+ SMTP_FROM=SUA EMPRESA <SEU EMAIL>
+ APP_URL=http://localhost:5000  # Ou seu domínio em 
+
 # Instale as dependências
 $ npm install
 
