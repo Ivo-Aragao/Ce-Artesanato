@@ -1,3 +1,4 @@
+require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const nunjucks = require('nunjucks');
 const methodOverride = require('method-override');
