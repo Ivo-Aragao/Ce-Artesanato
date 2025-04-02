@@ -5,8 +5,8 @@ const LoadOrderService = require('../services/LoadOrderService');
 const mailer = require('../../lib/mailer');
 const Cart = require('../../lib/cart');
 
-// Template de email para o vendedor
-const emailVendedor = (seller, product, buyer) => `
+// Template de email para NOVO PEDIDO ao vendedor
+const emailNovoPedidoVendedor = (seller, product, buyer) => `
   <h2>Olá ${seller.name}</h2>
   <p>Você tem um novo pedido de compra do seu produto</p>
   <p>Produto: ${product.name}</p>
@@ -18,9 +18,20 @@ const emailVendedor = (seller, product, buyer) => `
   <p>${buyer.address}</p>
   <p>${buyer.cep}</p>
   <br><br>
-  <p><strong>Entre em contato com o comprador para finalizar a venda</strong></p>
-  <br><br>
   <p>Atenciosamente, Equipe CE-Artesanato</p>
+`;
+
+// Template de email para CONFIRMAÇÃO DE VENDA ao vendedor
+const emailConfirmacaoVenda = (seller, product, order) => `
+  <h2>Olá ${seller.name}</h2>
+  <p>Você confirmou a venda do pedido #${order.id}:</p>
+  <div style="background:#f5f5f5; padding:15px; border-radius:5px; margin:10px 0;">
+    <p><strong>Produto:</strong> ${product.name}</p>
+    <p><strong>Preço:</strong> ${product.formatedPrice}</p>
+  </div>
+  <p>O comprador já foi notificado e agora aguarda o envio do produto.</p>
+  <br>
+  <p>Atenciosamente,<br>Equipe CE-Artesanato</p>
 `;
 
 // Template de email para o comprador
@@ -100,7 +111,7 @@ module.exports = {
           to: seller.email,
           from: process.env.SMTP_FROM,
           subject: 'Novo pedido de compra',
-          html: emailVendedor(seller, product, buyer)
+          html: emailNovoPedidoVendedor(seller, product, buyer)
         });
 
         return order;
@@ -147,7 +158,7 @@ module.exports = {
         const seller = await User.findOne({ where: { id: order.seller_id } });
         const buyer = await User.findOne({ where: { id: order.buyer_id } });
 
-        // Email para o comprador
+        // Email para o COMPRADOR
         await mailer.sendMail({
           to: buyer.email,
           from: process.env.SMTP_FROM,
@@ -155,12 +166,12 @@ module.exports = {
           html: emailComprador(seller, product, buyer, order)
         });
 
-        // Cópia para o vendedor
+        // Email para o VENDEDOR (confirmação específica)
         await mailer.sendMail({
           to: seller.email,
           from: process.env.SMTP_FROM,
           subject: `Venda confirmada - Pedido #${order.id}`,
-          html: emailVendedor(seller, product, buyer)
+          html: emailConfirmacaoVenda(seller, product, order)
         });
       }
 
